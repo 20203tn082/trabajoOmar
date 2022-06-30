@@ -1,0 +1,110 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema course_struts
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema course_struts
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `course_struts` DEFAULT CHARACTER SET utf8 ;
+USE `course_struts` ;
+
+-- -----------------------------------------------------
+-- Table `course_struts`.`Status`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `course_struts`.`Status` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `course_struts`.`User`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `course_struts`.`User` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(100) NOT NULL,
+  `password` VARCHAR(120) NOT NULL,
+  `create_at` DATETIME NOT NULL,
+  `Status_id` INT NOT NULL,
+  PRIMARY KEY (`id`, `Status_id`),
+  INDEX `fk_User_Status1_idx` (`Status_id` ASC) VISIBLE,
+  CONSTRAINT `fk_User_Status1`
+    FOREIGN KEY (`Status_id`)
+    REFERENCES `course_struts`.`Status` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `course_struts`.`Person`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `course_struts`.`Person` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  `surname` VARCHAR(45) NOT NULL,
+  `lastname` VARCHAR(45) NULL,
+  `birthday` DATE NOT NULL,
+  `phone` VARCHAR(11) NOT NULL,
+  `User_id` INT NOT NULL,
+  `User_Status_id` INT NOT NULL,
+  PRIMARY KEY (`id`, `User_id`, `User_Status_id`),
+  INDEX `fk_Person_User1_idx` (`User_id` ASC, `User_Status_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Person_User1`
+    FOREIGN KEY (`User_id` , `User_Status_id`)
+    REFERENCES `course_struts`.`User` (`id` , `Status_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `course_struts`.`Rol`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `course_struts`.`Rol` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  `Status_id` INT NOT NULL,
+  PRIMARY KEY (`id`, `Status_id`),
+  INDEX `fk_Rol_Status1_idx` (`Status_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Rol_Status1`
+    FOREIGN KEY (`Status_id`)
+    REFERENCES `course_struts`.`Status` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `course_struts`.`Rol_has_User`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `course_struts`.`Rol_has_User` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `Rol_id` INT NOT NULL,
+  `User_id` INT NOT NULL,
+  INDEX `fk_Rol_has_User_User1_idx` (`User_id` ASC) VISIBLE,
+  INDEX `fk_Rol_has_User_Rol_idx` (`Rol_id` ASC) VISIBLE,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_Rol_has_User_Rol`
+    FOREIGN KEY (`Rol_id`)
+    REFERENCES `course_struts`.`Rol` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Rol_has_User_User1`
+    FOREIGN KEY (`User_id`)
+    REFERENCES `course_struts`.`User` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
